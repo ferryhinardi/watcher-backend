@@ -18,20 +18,36 @@
     "cheerio": "^1.0.0-rc.3",
     "chromedriver": "^75.1.0",
     "cors": "^2.8.5",
+    "dataloader-sequelize": "^2.0.1",
+    "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "graphql": "^14.4.2",
+    "graphql-sequelize": "^9.3.6",
+    "lodash": "^4.17.14",
     "merge-graphql-schemas": "^1.5.8",
+    "mysql2": "^1.6.5",
     "request": "^2.88.0",
-    "selenium-webdriver": "^3.6.0"
+    "selenium-webdriver": "^3.6.0",
+    "sequelize": "4.41.2",
+    "sequelize-cli": "4.1.1",
+    "sequelize-fixtures": "^1.0.2"
   },
   "devDependencies": {
     "@playlyfe/gql": "^2.6.1",
     "nodemon": "^1.19.1"
   },
+  "engines": {
+    "node": ">=8.11.2 <=9.10.0",
+    "npm": "5.x"
+  },
   "scripts": {
+    "start": "npm run build && npm run start:prod",
+    "start:prod": "npm run-script database:init && DEBUG=app* node ./dist/index.js",
+    "start:dev": "nodemon -e js,gql --exec DEBUG=app* babel-node ./src/index.js",
     "build:clean": "rimraf dist/*",
     "build:dist": "babel src --out-dir dist --copy-files --ignore *.test.js,__tests__,__mocks__",
     "build": "npm run build:clean && npm run build:dist",
-    "start:dev": "nodemon -e js,gql --exec DEBUG=app* babel-node ./src/index.js"
+    "database:init": "mkdir -p dist/migrations src/migrations && npm run sequelize db:migrate",
+    "sequelize": "./node_modules/.bin/babel-node ./node_modules/.bin/sequelize $*"
   }
 }

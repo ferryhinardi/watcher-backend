@@ -26,6 +26,10 @@ var _lib = require('../modules/shared/lib');
 
 var _app = require('../config/app');
 
+var _context2 = require('./context');
+
+var _context3 = _interopRequireDefault(_context2);
+
 var _typeDefs = require('./typeDefs');
 
 var _typeDefs2 = _interopRequireDefault(_typeDefs);
@@ -39,6 +43,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var opts = {
   typeDefs: _typeDefs2.default,
   resolvers: _resolvers2.default,
+  context: _context3.default,
   introspection: true,
   playground: process.env.NODE_ENV !== 'production'
 };

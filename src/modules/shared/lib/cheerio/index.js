@@ -7,7 +7,7 @@ const url = MOVIE_URL;
 function getListFilm($, cb) {
   const films = [];
 
-  $('div[id="featured"] div[data-movie-id]').each((i, value) => {
+  $('div[data-movie-id]').each((i, value) => {
     const dataMovieId = $(value).attr('data-movie-id');
     films.push(dataMovieId);
   });
@@ -15,8 +15,8 @@ function getListFilm($, cb) {
   cb && cb(films);
 }
 
-function getDataFilm(href, cb) {
-  request(`${url}${href}`, function(err, res, body) {
+function getDataFilm(baseUrl, href, cb) {
+  request(`${baseUrl}${href}`, function(err, res, body) {
     if (err && res.statusCode !== 200) throw err;
     const $ = cheerio.load(body);
     const dataFilm = { url: `${url}${href}` };
@@ -37,6 +37,7 @@ function getDataFilm(href, cb) {
  * Note: Stuck to waiting load video url
  * ToDo: Create Selenium Engine
  */
+/*
 function getVideoUrl(href, cb) {
   request(`${url}${href}/play`, function(err, res, body) {
     if (err && res.statusCode !== 200) throw err;
@@ -48,19 +49,19 @@ function getVideoUrl(href, cb) {
     }, 10000);
   });
 }
-
-function handlingScrapping(err, res, body, cb) {
+*/
+function handlingScrapping(err, res, body, baseUrl, cb) {
   if (err && res.statusCode !== 200) throw err;
   const $ = cheerio.load(body);
 
   getListFilm($, films => {
     films.forEach(hrefFilm => {
-      getDataFilm(hrefFilm);
+      getDataFilm(baseUrl, hrefFilm);
     });
     cb(films);
   });
 }
 
-export function startScrapping(cb) {
-  request(url, (...args) => handlingScrapping(...args, cb));
+export function startScrapping({ baseUrl, pageUrl }, cb) {
+  request(pageUrl, (...args) => handlingScrapping(...args, baseUrl, cb));
 }

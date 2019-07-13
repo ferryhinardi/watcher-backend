@@ -1,0 +1,9 @@
+type Source {
+  title: String
+  description: String
+  url: String
+}
+
+type Query {
+  sources: [Source]
+}

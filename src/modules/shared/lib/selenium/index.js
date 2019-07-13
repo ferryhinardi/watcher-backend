@@ -11,7 +11,7 @@ export async function startSelenium(moviesUrls) {
     try {
       await driver.get(url);
       const videoElement = By.tagName('video.jw-video');
-      await driver.wait(until.elementLocated(videoElement));
+      // await driver.wait(until.elementLocated(videoElement));
       const movieUrl = await driver
         .findElement(videoElement)
         .getAttribute('src');

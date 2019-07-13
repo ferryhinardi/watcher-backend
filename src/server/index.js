@@ -2,15 +2,18 @@ import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import cors from 'cors';
 
+import { findSource } from '../modules/sources/resolvers/source';
 import { startScrapping, startSelenium } from '../modules/shared/lib';
-import { MOVIE_URL, ENGINE_API_KEY } from '../config/app';
+import { ENGINE_API_KEY } from '../config/app';
 
+import context from './context';
 import typeDefs from './typeDefs';
 import resolvers from './resolvers';
 
 const opts = {
   typeDefs,
   resolvers,
+  context,
   introspection: true,
   playground: process.env.NODE_ENV !== 'production',
 };
@@ -40,12 +43,15 @@ app.use((req, res, next) => {
 // Route API
 /* =============================== */
 app.get('/start-scrapping', async (req, res) => {
-  startScrapping(movieListUrl => {
-    const moviePlayListUrls = movieListUrl.map(
-      url => `${MOVIE_URL}${url}/play`
-    );
+  const source = await findSource();
+  const baseUrl = source.name;
+  const pageUrl = source.link;
+  startScrapping({ baseUrl, pageUrl }, movieListUrl => {
+    console.log('movieListUrl', movieListUrl);
+    const moviePlayListUrls = movieListUrl.map(url => `${baseUrl}${url}/play`);
     startSelenium(moviePlayListUrls);
   });
+  res.json({ baseUrl, pageUrl });
   res.sendStatus(200);
 });
 
