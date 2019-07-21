@@ -4,6 +4,16 @@ type Source {
   url: String
 }
 
+input SourceInput {
+  title: String
+  description: String
+  url: String
+}
+
 type Query {
   sources: [Source]
+}
+
+type Mutation {
+  createSource(source: SourceInput): Source
 }

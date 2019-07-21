@@ -1,7 +1,7 @@
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import cors from 'cors';
-
+import get from 'lodash/get';
 import { findSource } from '../modules/sources/resolvers/source';
 import { startScrapping, startSelenium } from '../modules/shared/lib';
 import { ENGINE_API_KEY } from '../config/app';
@@ -9,11 +9,13 @@ import { ENGINE_API_KEY } from '../config/app';
 import context from './context';
 import typeDefs from './typeDefs';
 import resolvers from './resolvers';
+import schemaDirectives from './directives';
 
 const opts = {
   typeDefs,
   resolvers,
   context,
+  schemaDirectives,
   introspection: true,
   playground: process.env.NODE_ENV !== 'production',
 };
@@ -43,15 +45,16 @@ app.use((req, res, next) => {
 // Route API
 /* =============================== */
 app.get('/start-scrapping', async (req, res) => {
-  const source = await findSource();
-  const baseUrl = source.name;
-  const pageUrl = source.link;
-  startScrapping({ baseUrl, pageUrl }, movieListUrl => {
+  const id = req.query.id;
+  const source = await findSource(id);
+  const baseUrl = get(source, 'name');
+  const pageUrl = get(source, 'link');
+  startScrapping({ baseUrl, pageUrl, source }, movieListUrl => {
     console.log('movieListUrl', movieListUrl);
-    const moviePlayListUrls = movieListUrl.map(url => `${baseUrl}${url}/play`);
-    startSelenium(moviePlayListUrls);
+    //   const moviePlayListUrls = movieListUrl.map(url => `${baseUrl}${url}/play`);
+    //   startSelenium(moviePlayListUrls);
   });
-  res.json({ baseUrl, pageUrl });
+  res.json({ id, baseUrl, pageUrl });
   res.sendStatus(200);
 });
 

@@ -20,7 +20,11 @@ export default {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      description: {
+      synopsis: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      image_url: {
         allowNull: false,
         type: Sequelize.STRING,
       },

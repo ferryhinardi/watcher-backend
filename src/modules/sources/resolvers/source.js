@@ -1,8 +1,8 @@
 import { Source } from 'models';
 
-export async function findSource() {
+export async function findSource(id) {
   const source = await Source.findOne({
-    where: { id: 1 },
+    where: { id },
   });
 
   return source;

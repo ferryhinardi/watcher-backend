@@ -1,5 +1,6 @@
 import request from 'request';
 import cheerio from 'cheerio';
+// import { insertMovie } from '../../../movies/resolvers/movie';
 import { MOVIE_URL } from '../../../../config/app';
 
 const url = MOVIE_URL;
@@ -24,6 +25,10 @@ function getDataFilm(baseUrl, href, cb) {
     $('h3[itemprop="name"]').each((i, value) => {
       const title = $(value).attr('content');
       dataFilm.title = title;
+    });
+    $('meta[itemprop="image"]').each((i, value) => {
+      const imageUrl = $(value).attr('content');
+      dataFilm.imageUrl = imageUrl;
     });
     $('div[itemprop="description"] span').each((i, value) => {
       const description = $(value).text();
@@ -50,18 +55,26 @@ function getVideoUrl(href, cb) {
   });
 }
 */
-function handlingScrapping(err, res, body, baseUrl, cb) {
+function handlingScrapping(err, res, body, source, baseUrl, cb) {
   if (err && res.statusCode !== 200) throw err;
   const $ = cheerio.load(body);
 
   getListFilm($, films => {
-    films.forEach(hrefFilm => {
-      getDataFilm(baseUrl, hrefFilm);
-    });
+    for (const index in films) {
+      const hrefFilm = films[index];
+      getDataFilm(baseUrl, hrefFilm, movie => {
+        const data = { ...movie, source_id: source.id };
+        console.log('data film', data);
+        // insertMovie(data);
+      });
+    }
+
     cb(films);
   });
 }
 
-export function startScrapping({ baseUrl, pageUrl }, cb) {
-  request(pageUrl, (...args) => handlingScrapping(...args, baseUrl, cb));
+export function startScrapping({ baseUrl, pageUrl, source }, cb) {
+  request(pageUrl, (...args) =>
+    handlingScrapping(...args, source, baseUrl, cb)
+  );
 }

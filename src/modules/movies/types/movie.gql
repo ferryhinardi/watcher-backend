@@ -1,8 +1,24 @@
 type Movie {
+  id: ID!
   title: String
-  description: String
+  synopsis: String
+  imageUrl: String
+  url: String
+  source: Source
 }
 
 type Query {
   movies: [Movie]
+}
+
+input MovieInput {
+  title: String
+  synopsis: String
+  imageUrl: String
+  url: String
+  source_id: ID
+}
+
+type Mutation {
+  createMovie(movie: MovieInput): Movie
 }
