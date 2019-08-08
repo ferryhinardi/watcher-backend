@@ -13,6 +13,10 @@ export default (sequelize, Sequelize) => {
         field: 'image_url',
         type: Sequelize.STRING,
       },
+      imageDetailUrl: {
+        field: 'image_detail_url',
+        type: Sequelize.STRING,
+      },
       url: Sequelize.STRING,
       createdAt: {
         field: 'created_at',
