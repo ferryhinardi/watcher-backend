@@ -27,6 +27,17 @@ export default {
   },
   Query: {
     movies: resolver(Movie),
+    movie: resolver(Movie, {
+      before: (findOption, args) => {
+        if (args.id) {
+          findOption.where = {
+            id: args.id,
+          };
+        }
+
+        return findOption;
+      },
+    }),
   },
   Mutation: {
     createMovie: async (_, { movie: movieParam }) => {
